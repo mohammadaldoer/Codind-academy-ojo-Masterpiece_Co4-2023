@@ -1,25 +1,17 @@
-// models/User.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+
 const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    unique: true,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
+  username: { type: String, required: true },
+  password: { type: String, required: true },
 });
 
-// Hash the password before saving
+// Hash the password before saving to the database
 userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
   try {
-    const hashedPassword = await bcrypt.hash(this.password, 10);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(this.password, salt);
     this.password = hashedPassword;
     next();
   } catch (error) {
@@ -30,3 +22,4 @@ userSchema.pre('save', async function (next) {
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
+
