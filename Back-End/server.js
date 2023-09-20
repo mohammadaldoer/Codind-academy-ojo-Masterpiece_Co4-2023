@@ -1,17 +1,23 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const tablesRoutes = require('./Routes/tableRoute');
-const makeOrderRoutes = require('./Routes/orderRouter');
-const userRoutes = require('./Routes/userRoutes'); // Import user routes
-const authMiddleware = require('./middleware/authMiddleware');
-
+const cors = require('cors');
+const authRoutes = require('./Routes/userRoutes');
+const routes = require('./Routes/menuitemRoutes');
 const app = express();
 const PORT = process.env.PORT || 8080;
+const corsOptions = {
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // Allow cookies and credentials to be sent with the request (if needed)
+  optionsSuccessStatus: 204, // Respond with a 204 status for preflight requests (OPTIONS)
+};
 
-// Connect to your MongoDB database
+// Middleware
+app.use(cors(corsOptions)); //
+app.use(express.json());
+
+// Connect to MongoDB (replace 'YOUR_MONGODB_URI' with your MongoDB connection URI)
 mongoose
-  .connect('mongodb+srv://mohammadaldoer:Fev78fpQovovxBQ6@cluster0.ojpsgxa.mongodb.net/cafe?retryWrites=true&w=majority', {
+  .connect('mongodb+srv://mohammadaldoer:Fev78fpQovovxBQ6@cluster0.ojpsgxa.mongodb.net/cafee?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -22,16 +28,14 @@ mongoose
     console.error('Error connecting to MongoDB:', error);
   });
 
-// Middleware
-app.use(bodyParser.json());
 
 // Routes
-app.use('/api/tables', tablesRoutes);
-app.use('/api/make-order', makeOrderRoutes);
-app.use('/api/user', userRoutes); // Include user routes
-// Add other routes as needed
+app.use('/auth', authRoutes);
+app.use('/api', routes);
 
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+// Connect to your MongoDB database
+

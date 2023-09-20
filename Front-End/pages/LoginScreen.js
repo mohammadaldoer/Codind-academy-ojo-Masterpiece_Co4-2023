@@ -1,38 +1,46 @@
+// LoginScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import axios from 'axios';
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Perform login logic here (e.g., validate credentials)
-    if (username === 'yourUsername' && password === 'yourPassword') {
-      // Navigate to the Tables page upon successful login
-      navigation.navigate('Tables');
-    } else {
-      // Handle login error (e.g., display an error message)
-      alert('Invalid username or password');
-    }
+    // You will need to implement the authentication logic here
+    // For this example, let's assume a simple API call for authentication
+
+    axios.post('http://10.0.2.2:8080/auth/login', { username, password })
+      .then((response) => {
+        if (response.data.authenticated) {
+          // Navigate to the tables screen on successful login
+          navigation.navigate('Tables');
+        } else {
+          alert('Invalid credentials. Please try again.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+      });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Cafe App</Text>
+      <Text style={styles.title}>Cafe Management System</Text>
       <TextInput
+        style={styles.input}
         placeholder="Username"
-        value={username}
         onChangeText={(text) => setUsername(text)}
-        style={styles.input}
       />
       <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-        secureTextEntry
         style={styles.input}
+        placeholder="Password"
+        secureTextEntry
+        onChangeText={(text) => setPassword(text)}
       />
-      <Button title="Login" onPress={handleLogin} />
+      <Button title="Log In" onPress={handleLogin} />
     </View>
   );
 };
@@ -43,7 +51,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  header: {
+  title: {
     fontSize: 24,
     marginBottom: 20,
   },
@@ -52,8 +60,8 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
-    marginBottom: 20,
-    paddingLeft: 10,
+    marginBottom: 10,
+    padding: 10,
   },
 });
 
